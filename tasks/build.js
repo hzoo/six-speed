@@ -91,16 +91,30 @@ Gulp.task('build:tests', function() {
 
             if (ext === 'es6') {
               // TODO: Update these settings for Babel 6
-              var babel = Babel.transform(content, {presets: ['es2015', 'stage-0']}).code,
-                  babelRuntime = Babel.transform(content, {presets: ['es2015', 'stage-0'], plugins: ['transform-runtime']}).code,
-                  babelLoose = Babel.transform(content, {presets: ['es2015-loose', 'stage-0'], plugins: ['transform-runtime']}).code;
-              // createFile('babel', babel);
-              // if (babel !== babelRuntime) {
-              //   createFile('babel-runtime', babelRuntime);
-              // }
-              // if (babel !== babelLoose) {
-              //   createFile('babel-loose', babelLoose);
-              // }
+              var babel = Babel.transform(content, {
+                presets: [
+                  [require('babel-preset-env'), { shippedProposals: true }]
+                ],
+              }).code;
+              var babelRuntime = Babel.transform(content, {
+                presets: [
+                  [require('babel-preset-env'), { shippedProposals: true }]
+                ],
+                plugins: ['transform-runtime']
+              }).code;
+              var babelLoose = Babel.transform(content, {
+                presets: [
+                  [require('babel-preset-env'), { shippedProposals: true, loose: true }]
+                ],
+              }).code;
+
+              createFile('babel', babel);
+              if (babel !== babelRuntime) {
+                createFile('babel-runtime', babelRuntime);
+              }
+              if (babel !== babelLoose) {
+                createFile('babel-loose', babelLoose);
+              }
 
               // try {
               //   var bubleCode = Buble.transform(content, { dangerousForOf: true }).code;
